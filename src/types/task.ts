@@ -1,16 +1,24 @@
-export interface Task {
+export type Task = {
   id: string;
   title: string;
   completed: boolean;
   createdAt: string;
   updatedAt: string;
-}
+};
 
-export type TaskFilter = 'all' | 'active' | 'completed';
+export type Filter = 'all' | 'active' | 'completed';
+
+export type SortOption = 
+  | 'date-desc'  // Newest first
+  | 'date-asc'   // Oldest first
+  | 'alpha-asc'  // A to Z
+  | 'alpha-desc' // Z to A
+  | 'completed'; // Completed tasks last
 
 export interface TaskState {
   tasks: Task[];
-  filter: TaskFilter;
+  filter: Filter;
+  sortOption: SortOption;
   isLoading: boolean;
   error: string | null;
 }
@@ -24,10 +32,15 @@ export interface TaskStore extends TaskState {
   reorderTasks: (startIndex: number, endIndex: number) => void;
   
   // Filter actions
-  setFilter: (filter: TaskFilter) => void;
+  setFilter: (filter: Filter) => void;
+  setSortOption: (option: SortOption) => void;
   clearCompleted: () => void;
   
   // Loading state
   setLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
+  
+  // Task counts
+  getActiveTasksCount: () => number;
+  getCompletedTasksCount: () => number;
 } 
