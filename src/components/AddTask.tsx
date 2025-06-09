@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Box,
   Button,
@@ -20,6 +20,7 @@ const AddTask: React.FC = () => {
   const [error, setError] = useState('');
   const { addTask } = useTaskStore();
   const toast = useToast();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const inputBg = useColorModeValue('white', 'gray.700');
   const inputBorder = useColorModeValue('gray.200', 'gray.600');
@@ -32,17 +33,20 @@ const AddTask: React.FC = () => {
 
     if (!trimmedTitle) {
       setError('Task title cannot be empty');
+      inputRef.current?.focus();
       return;
     }
 
     if (trimmedTitle.length > 100) {
       setError('Task title cannot be longer than 100 characters');
+      inputRef.current?.focus();
       return;
     }
 
     addTask(trimmedTitle);
     setTitle('');
     setError('');
+    inputRef.current?.focus();
     
     toast({
       title: 'Task added successfully',
@@ -58,45 +62,49 @@ const AddTask: React.FC = () => {
     setError('');
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e);
+    }
+  };
+
   return (
-    <Box as="form" onSubmit={handleSubmit} w="100%">
-      <VStack spacing={6} align="stretch">
+    <Box as="form" onSubmit={handleSubmit} role="form" aria-label="Add new task">
+      <VStack spacing={4} align="stretch">
         <FormControl isInvalid={!!error}>
-          <Text mb={2} fontSize="lg" fontWeight="medium">
-            Enter your task details
-          </Text>
           <InputGroup size="lg">
             <Input
+              ref={inputRef}
               value={title}
               onChange={handleChange}
-              placeholder="What needs to be done?"
-              size="lg"
-              height="60px"
-              fontSize="lg"
-              autoFocus
+              onKeyDown={handleKeyDown}
+              placeholder="Add a new task..."
               bg={inputBg}
               borderColor={inputBorder}
               _hover={{ borderColor: inputHoverBorder }}
-              _focus={{ borderColor: inputFocusBorder, boxShadow: 'none' }}
-              pr="5rem"
+              _focus={{ borderColor: inputFocusBorder }}
+              aria-label="New task title"
+              aria-invalid={!!error}
+              aria-describedby={error ? 'task-error' : undefined}
             />
-            <InputRightElement width="5rem" h="100%">
+            <InputRightElement width="4.5rem">
               <Button
-                h="100%"
-                size="lg"
-                colorScheme="blue"
+                h="1.75rem"
+                size="sm"
                 type="submit"
-                isDisabled={!title.trim()}
-                leftIcon={<AddIcon boxSize={5} />}
-                fontSize="lg"
-                borderTopLeftRadius={0}
-                borderBottomLeftRadius={0}
+                colorScheme="blue"
+                aria-label="Add task"
               >
-                Add
+                <AddIcon />
               </Button>
             </InputRightElement>
           </InputGroup>
-          <FormErrorMessage fontSize="md">{error}</FormErrorMessage>
+          {error && (
+            <FormErrorMessage id="task-error" role="alert">
+              {error}
+            </FormErrorMessage>
+          )}
         </FormControl>
       </VStack>
     </Box>

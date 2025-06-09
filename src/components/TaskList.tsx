@@ -9,7 +9,15 @@ const TaskList: React.FC = () => {
 
   if (isLoading) {
     return (
-      <Box p={8} bg={bgColor} borderRadius="xl" textAlign="center" boxShadow="sm">
+      <Box 
+        p={8} 
+        bg={bgColor} 
+        borderRadius="xl" 
+        textAlign="center" 
+        boxShadow="sm"
+        role="status"
+        aria-label="Loading tasks"
+      >
         <Spinner size="xl" thickness="4px" color="blue.400" mb={4} />
         <VStack spacing={4} align="stretch">
           {[...Array(3)].map((_, i) => (
@@ -47,14 +55,29 @@ const TaskList: React.FC = () => {
 
   if (sortedTasks.length === 0) {
     return (
-      <Box p={8} bg={bgColor} borderRadius="xl" textAlign="center" boxShadow="sm">
+      <Box 
+        p={8} 
+        bg={bgColor} 
+        borderRadius="xl" 
+        textAlign="center" 
+        boxShadow="sm"
+        role="status"
+        aria-label="No tasks found"
+      >
         <Text fontSize="xl" color="gray.500">No tasks found</Text>
       </Box>
     );
   }
 
   return (
-    <VStack spacing={4} align="stretch">
+    <VStack 
+      spacing={4} 
+      align="stretch"
+      role="list"
+      aria-label={`${filter} tasks list`}
+      aria-live="polite"
+      aria-relevant="additions removals"
+    >
       {sortedTasks.map((task) => (
         <TaskItem key={task.id} task={task} />
       ))}

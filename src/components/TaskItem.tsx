@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Box,
   Checkbox,
@@ -12,6 +12,7 @@ import {
   ScaleFade,
   VStack,
   keyframes,
+  useDisclosure,
 } from '@chakra-ui/react';
 import {
   DeleteIcon,
@@ -40,6 +41,9 @@ const TaskItem: React.FC<TaskItemProps> = ({ task }) => {
   const [isFading, setIsFading] = useState(false);
   const { toggleTask, deleteTask, updateTask } = useTaskStore();
   const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const cancelRef = useRef<HTMLButtonElement>(null);
+  const editInputRef = useRef<HTMLInputElement>(null);
 
   const {
     attributes,
@@ -60,6 +64,12 @@ const TaskItem: React.FC<TaskItemProps> = ({ task }) => {
   const borderColor = useColorModeValue('gray.200', 'gray.600');
   const hoverBgColor = useColorModeValue('gray.50', 'gray.600');
   const completedTextColor = useColorModeValue('gray.500', 'gray.400');
+
+  useEffect(() => {
+    if (isEditing && editInputRef.current) {
+      editInputRef.current.focus();
+    }
+  }, [isEditing]);
 
   const handleToggle = () => {
     toggleTask(task.id);
@@ -109,6 +119,15 @@ const TaskItem: React.FC<TaskItemProps> = ({ task }) => {
     setIsEditing(false);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSave();
+    } else if (e.key === 'Escape') {
+      handleCancel();
+    }
+  };
+
   return (
     <ScaleFade in={!isFading} initialScale={0.9}>
       <Box
@@ -121,6 +140,9 @@ const TaskItem: React.FC<TaskItemProps> = ({ task }) => {
         borderColor={borderColor}
         _hover={{ bg: hoverBgColor, shadow: 'md' }}
         transition="all 0.2s"
+        role="listitem"
+        aria-label={`Task: ${task.title}`}
+        tabIndex={0}
       >
         <HStack spacing={6} align="center">
           <Tooltip label="Drag to reorder">
@@ -141,19 +163,22 @@ const TaskItem: React.FC<TaskItemProps> = ({ task }) => {
             onChange={handleToggle}
             colorScheme="green"
             size="lg"
+            aria-label={task.completed ? 'Mark task as incomplete' : 'Mark task as complete'}
           />
           {isEditing ? (
             <>
               <Input
+                ref={editInputRef}
                 value={editedTitle}
                 onChange={(e) => setEditedTitle(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSave()}
+                onKeyDown={handleKeyDown}
                 autoFocus
                 size="lg"
                 height="50px"
                 fontSize="lg"
                 variant="filled"
                 flex={1}
+                aria-label="Edit task title"
               />
               <HStack spacing={3}>
                 <Tooltip label="Save changes">
@@ -195,6 +220,8 @@ const TaskItem: React.FC<TaskItemProps> = ({ task }) => {
                 animation: `${strikethrough} 0.3s ease-in`,
               } : {}}
               transition="color 0.2s"
+              role="text"
+              aria-label={task.completed ? `Completed task: ${task.title}` : `Active task: ${task.title}`}
             >
               {task.title}
             </Text>
@@ -216,7 +243,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task }) => {
                 <IconButton
                   aria-label="Delete task"
                   icon={<DeleteIcon boxSize={5} />}
-                  onClick={handleDelete}
+                  onClick={onOpen}
                   colorScheme="red"
                   size="lg"
                   variant="ghost"

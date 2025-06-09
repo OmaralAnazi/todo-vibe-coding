@@ -50,6 +50,13 @@ const TaskFilters: React.FC = () => {
     });
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent, action: () => void) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      action();
+    }
+  };
+
   return (
     <>
       <HStack
@@ -61,12 +68,19 @@ const TaskFilters: React.FC = () => {
         bg={useColorModeValue('white', 'gray.800')}
         borderRadius="xl"
         boxShadow="sm"
+        role="toolbar"
+        aria-label="Task filters"
       >
-        <Text fontSize="lg" fontWeight="medium">
+        <Text 
+          fontSize="lg" 
+          fontWeight="medium"
+          role="status"
+          aria-label={`${activeCount} ${activeCount === 1 ? 'task' : 'tasks'} left`}
+        >
           {activeCount} {activeCount === 1 ? 'task' : 'tasks'} left
         </Text>
 
-        <HStack spacing={2}>
+        <HStack spacing={2} role="group" aria-label="Filter tasks">
           <Tooltip label="Show all tasks">
             <Button
               size="md"
@@ -77,6 +91,9 @@ const TaskFilters: React.FC = () => {
                 bg: filter === 'all' ? activeButtonBg : 'gray.200',
               }}
               onClick={() => setFilter('all')}
+              onKeyDown={(e) => handleKeyDown(e, () => setFilter('all'))}
+              aria-pressed={filter === 'all'}
+              role="radio"
             >
               All
             </Button>
@@ -91,6 +108,9 @@ const TaskFilters: React.FC = () => {
                 bg: filter === 'active' ? activeButtonBg : 'gray.200',
               }}
               onClick={() => setFilter('active')}
+              onKeyDown={(e) => handleKeyDown(e, () => setFilter('active'))}
+              aria-pressed={filter === 'active'}
+              role="radio"
             >
               Active
             </Button>
@@ -105,6 +125,9 @@ const TaskFilters: React.FC = () => {
                 bg: filter === 'completed' ? activeButtonBg : 'gray.200',
               }}
               onClick={() => setFilter('completed')}
+              onKeyDown={(e) => handleKeyDown(e, () => setFilter('completed'))}
+              aria-pressed={filter === 'completed'}
+              role="radio"
             >
               Completed
             </Button>
@@ -118,6 +141,8 @@ const TaskFilters: React.FC = () => {
               variant="ghost"
               colorScheme="red"
               onClick={onOpen}
+              onKeyDown={(e) => handleKeyDown(e, onOpen)}
+              aria-label="Clear completed tasks"
             >
               Clear completed
             </Button>
@@ -129,22 +154,37 @@ const TaskFilters: React.FC = () => {
         isOpen={isOpen}
         leastDestructiveRef={cancelRef}
         onClose={onClose}
+        aria-labelledby="clear-completed-title"
+        aria-describedby="clear-completed-description"
       >
         <AlertDialogOverlay>
           <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+            <AlertDialogHeader 
+              fontSize="lg" 
+              fontWeight="bold"
+              id="clear-completed-title"
+            >
               Clear Completed Tasks
             </AlertDialogHeader>
 
-            <AlertDialogBody>
+            <AlertDialogBody id="clear-completed-description">
               Are you sure you want to clear all completed tasks? This action cannot be undone.
             </AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={onClose}>
+              <Button 
+                ref={cancelRef} 
+                onClick={onClose}
+                aria-label="Cancel clearing completed tasks"
+              >
                 Cancel
               </Button>
-              <Button colorScheme="red" onClick={handleClearCompleted} ml={3}>
+              <Button 
+                colorScheme="red" 
+                onClick={handleClearCompleted} 
+                ml={3}
+                aria-label="Confirm clearing completed tasks"
+              >
                 Clear
               </Button>
             </AlertDialogFooter>

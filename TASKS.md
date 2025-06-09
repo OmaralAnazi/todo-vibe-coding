@@ -209,26 +209,26 @@
   - [x] Add state transitions
 
 ## Accessibility
-- [ ] Add keyboard navigation
-  - [ ] Add focus management
-  - [ ] Add keyboard shortcuts
-  - [ ] Add focus indicators
-- [ ] Implement ARIA labels
-  - [ ] Add role attributes
-  - [ ] Add aria-labels
-  - [ ] Add aria-describedby
-- [ ] Add keyboard alternatives for drag and drop
-  - [ ] Add keyboard reordering
-  - [ ] Add keyboard instructions
-  - [ ] Add focus management
-- [ ] Ensure proper focus management
-  - [ ] Add focus trapping
-  - [ ] Add focus restoration
-  - [ ] Add focus order
-- [ ] Test with screen readers
-  - [ ] Test with NVDA
-  - [ ] Test with VoiceOver
-  - [ ] Test with JAWS
+- [x] Add keyboard navigation
+  - [x] Add focus management
+  - [x] Add keyboard shortcuts
+  - [x] Add focus indicators
+- [x] Implement ARIA labels
+  - [x] Add role attributes
+  - [x] Add aria-labels
+  - [x] Add aria-describedby
+- [x] Add keyboard alternatives for drag and drop
+  - [x] Add keyboard reordering
+  - [x] Add keyboard instructions
+  - [x] Add focus management
+- [x] Ensure proper focus management
+  - [x] Add focus trapping
+  - [x] Add focus restoration
+  - [x] Add focus order
+- [x] Test with screen readers
+  - [x] Test with NVDA
+  - [x] Test with VoiceOver
+  - [x] Test with JAWS
 
 ## Testing
 - [ ] Set up testing environment
