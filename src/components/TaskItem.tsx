@@ -13,6 +13,13 @@ import {
   VStack,
   keyframes,
   useDisclosure,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogBody,
+  AlertDialogFooter,
+  Button,
 } from '@chakra-ui/react';
 import {
   DeleteIcon,
@@ -255,6 +262,47 @@ const TaskItem: React.FC<TaskItemProps> = ({ task }) => {
           )}
         </HStack>
       </Box>
+      <AlertDialog
+        isOpen={isOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onClose}
+        aria-labelledby="delete-task-title"
+        aria-describedby="delete-task-description"
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader 
+              fontSize="lg" 
+              fontWeight="bold"
+              id="delete-task-title"
+            >
+              Delete Task
+            </AlertDialogHeader>
+
+            <AlertDialogBody id="delete-task-description">
+              Are you sure you want to delete this task? This action cannot be undone.
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button 
+                ref={cancelRef} 
+                onClick={onClose}
+                aria-label="Cancel deleting task"
+              >
+                Cancel
+              </Button>
+              <Button 
+                colorScheme="red" 
+                onClick={handleDelete} 
+                ml={3}
+                aria-label="Confirm deleting task"
+              >
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </ScaleFade>
   );
 };
